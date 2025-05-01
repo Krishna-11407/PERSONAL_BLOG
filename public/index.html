@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="index-page">
+    <div class="animated-grid"></div>
+    <header class="main-header">
+        <div class="logo-section">
+            <h1>BlogSpace</h1>
+        </div>
+        <div class="nav-actions">
+            <button class="action-btn new-post">
+                <i class="fas fa-plus"></i>
+                <span>New Post</span>
+            </button>
+            <div class="user-profile">
+                <div class="user-avatar">ST</div>
+                <span class="username">Shiva Teja</span>
+            </div>
+            <button class="action-btn logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="posts-container">
+        <!-- Posts will be dynamically added here -->
+    </main>
+
+    <!-- Post Modal -->
+    <div class="post-modal">
+        <div class="modal-content">
+            <div class="modal-close">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-body">
+                <!-- Post content will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            // Get user info and update header
+            const userInfo = JSON.parse(localStorage.getItem('user'));
+            if (userInfo) {
+                const avatar = document.querySelector('.user-avatar');
+                const username = document.querySelector('.username');
+                if (avatar && username) {
+                    const initials = userInfo.name.split(' ').map(n => n[0]).join('');
+                    avatar.textContent = initials;
+                    username.textContent = userInfo.name;
+                }
+            }
+
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('.main-header');
+                if (window.scrollY > 20) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Fetch and display posts
+            fetchPosts();
+
+            // New Post button
+            document.querySelector('.new-post').addEventListener('click', () => {
+                window.location.href = '/new-post.html';
+            });
+
+            // Logout button
+            document.querySelector('.logout').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            });
+
+            // Modal close button
+            document.querySelector('.modal-close').addEventListener('click', () => {
+                const modal = document.querySelector('.post-modal');
+                modal.classList.remove('active');
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                const modal = document.querySelector('.post-modal');
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        async function fetchPosts() {
+            try {
+                const response = await fetch('/api/posts', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch posts');
+                }
+                
+                const posts = await response.json();
+                displayPosts(posts);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                const container = document.querySelector('.posts-container');
+                container.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Failed to load posts. Please try again later.</span>
+                    </div>
+                `;
+            }
+        }
+
+        function displayPosts(posts) {
+            const container = document.querySelector('.posts-container');
+            if (!posts || posts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-posts">
+                        <i class="fas fa-pen-fancy"></i>
+                        <h2>No Posts Yet</h2>
+                        <p>Be the first to share your thoughts!</p>
+                        <button class="action-btn new-post" onclick="window.location.href='/new-post.html'">
+                            <i class="fas fa-plus"></i>
+                            <span>Create Your First Post</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <article class="post" data-post-id="${post._id}">
+                    <h2>${post.title}</h2>
+                    <div class="post-meta">
+                        <i class="far fa-user"></i>
+                        <span>${post.author}</span>
+                        <i class="far fa-calendar"></i>
+                        <span>${new Date(post.createdAt || post.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="post-preview">
+                        ${post.content}
+                    </div>
+                    <button class="read-more-btn" onclick="showFullPost('${post._id}')">
+                        Read More
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </article>
+            `).join('');
+        }
+
+        async function showFullPost(postId) {
+            try {
+                const response = await fetch(`/api/posts/${postId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch post');
+                }
+                
+                const post = await response.json();
+                const modal = document.querySelector('.post-modal');
+                const modalBody = modal.querySelector('.modal-body');
+                
+                modalBody.innerHTML = `
+                    <h2>${post.title}</h2>
+                    <div class="post-meta">
+                        <i class="far fa-user"></i>
+                        <span>${post.author}</span>
+                        <i class="far fa-calendar"></i>
+                        <span>${new Date(post.createdAt || post.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="post-content">
+                        ${post.content}
+                    </div>
+                `;
+                modal.classList.add('active');
+            } catch (error) {
+                console.error('Error fetching post:', error);
+                alert('Failed to load post. Please try again later.');
+            }
+        }
+    </script>
+</body>
+</html> 

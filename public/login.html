@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Blog Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="animated-grid"></div>
+    <div class="login-container">
+        <div class="form-header">
+            <h1><i class="fas fa-user-circle"></i> Welcome Back</h1>
+            <p class="subtitle">Sign in to continue to your account</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+        </div>
+        <div id="successMessage" class="success-message hidden">
+            <i class="fas fa-check-circle"></i>
+            <span></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Enter your password" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+            <div class="form-footer">
+                <label class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
+            <button type="submit" class="login-btn">
+                <span class="btn-text">Sign In</span>
+                <i class="fas fa-sign-in-alt"></i>
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>or continue with</span>
+        </div>
+        
+        <div class="social-login">
+            <button class="social-btn google">
+                <i class="fab fa-google"></i>
+                <span>Google</span>
+            </button>
+            <button class="social-btn github">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </button>
+        </div>
+
+        <p class="switch-form">Don't have an account? <a href="#" id="showRegister">Create Account</a></p>
+    </div>
+
+    <div class="register-container hidden">
+        <div class="form-header">
+            <h1><i class="fas fa-user-plus"></i> Create Account</h1>
+            <p class="subtitle">Join our community of writers</p>
+        </div>
+
+        <div id="registerError" class="error-message hidden">
+            <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+        </div>
+        <div id="registerSuccess" class="success-message hidden">
+            <i class="fas fa-check-circle"></i>
+            <span></span>
+        </div>
+
+        <form id="registerForm">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="regName" placeholder="Enter your full name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="regEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="regPassword" placeholder="Create a password" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+            <div class="terms">
+                <label class="checkbox-label">
+                    <input type="checkbox" required>
+                    <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                </label>
+            </div>
+            <button type="submit" class="register-btn">
+                <span class="btn-text">Create Account</span>
+                <i class="fas fa-user-plus"></i>
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>or sign up with</span>
+        </div>
+
+        <div class="social-login">
+            <button class="social-btn google">
+                <i class="fab fa-google"></i>
+                <span>Google</span>
+            </button>
+            <button class="social-btn github">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </button>
+        </div>
+
+        <p class="switch-form">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html> 
